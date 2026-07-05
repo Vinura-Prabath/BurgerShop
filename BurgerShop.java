@@ -6,7 +6,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
-// ==================== 1. ORDER MODEL ====================
+
+
+
+// ======ORDER MODEL ========
 class Order {
     private String orderID;
     private String customerID;
@@ -14,7 +17,7 @@ class Order {
     private int quantity;
     private double burgerPrice;
     private double totalPrice;
-    private String status; // "PREPARING", "DELIVERED", "CANCELLED"
+    private String status;
 
     public Order(String orderID, String customerID, String customerName, int quantity, double burgerPrice, String status) {
         this.orderID = orderID;
@@ -44,7 +47,7 @@ class Order {
     }
 }
 
-// ==================== 2. ORDER MANAGER (BACKEND ENGINE) ====================
+// =======ORDER MANAGER ===========
 class OrderManager {
     private ArrayList<Order> orders;
     private int orderCounter = 1;
@@ -140,18 +143,14 @@ class OrderManager {
     }
 }
 
-// ==================== 3. MAIN CONTROLLER (SINGLETON) ====================
+// =========MAIN CONTROLLER=============
 class BurgerShopController {
     private static BurgerShopController instance;
     private OrderManager orderManager;
 
     private BurgerShopController() {
         orderManager = new OrderManager();
-        // Seed initial data for previewing tables
-        orderManager.placeOrder("Saman Kumara", 5);
-        orderManager.placeOrder("Sugath Pathirana", 3);
-        orderManager.searchOrderByID("0001").setStatus("DELIVERED");
-        orderManager.searchOrderByID("0002").setStatus("CANCELLED");
+        // Initial test/preview data seeding has been removed from here.
     }
 
     public static BurgerShopController getInstance() {
@@ -166,7 +165,7 @@ class BurgerShopController {
     }
 }
 
-// ==================== 4. UI STYLING & TEMPLATE ====================
+// ======UI STYLING==============
 class UIComponents {
     public static JPanel createHeader(String title) {
         JPanel header = new JPanel(new BorderLayout());
@@ -191,12 +190,12 @@ class UIComponents {
     }
 }
 
-// ==================== 5. HOME PAGE GUI ====================
+// =========HOME PAGE GUI==============
 class HomeFrame extends JFrame {
     public HomeFrame() {
         setTitle("iHungry Burger Shop Management System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(750, 480);
+        setSize(750, 520); // Slightly increased height to accommodate the image perfectly
         setLocationRelativeTo(null);
         setResizable(false);
         setLayout(new GridLayout(1, 2));
@@ -206,17 +205,31 @@ class HomeFrame extends JFrame {
         leftPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
         
         JLabel titleLabel = new JLabel("Welcome to Burgers", JLabel.CENTER);
         titleLabel.setFont(new Font("Serif", Font.BOLD, 28));
         titleLabel.setForeground(new Color(184, 134, 11));
         leftPanel.add(titleLabel, gbc);
 
-        gbc.gridy = 1;
-        gbc.insets = new Insets(20, 0, 0, 0);
-        JLabel subLabel = new JLabel("iHungry Shop Management", JLabel.CENTER);
-        subLabel.setFont(new Font("Arial", Font.ITALIC, 14));
-        leftPanel.add(subLabel, gbc);
+        
+
+        // ======Add Image======
+        gbc.gridy = 2;
+        gbc.insets = new Insets(10, 0, 0, 0);
+        try {
+            
+            ImageIcon originalIcon = new ImageIcon("burger.jpg"); 
+            
+           
+            Image scaledImage = originalIcon.getImage().getScaledInstance(220, 220, Image.SCALE_SMOOTH);
+            ImageIcon scaledIcon = new ImageIcon(scaledImage);
+            
+            JLabel imageLabel = new JLabel(scaledIcon);
+            leftPanel.add(imageLabel, gbc);
+        } catch (Exception e) {
+            System.out.println("Image could not be loaded: " + e.getMessage());
+        }
 
         // Right Menu Panel
         JPanel rightPanel = new JPanel();
@@ -259,10 +272,11 @@ class HomeFrame extends JFrame {
     }
 }
 
-// ==================== 6. PLACE ORDER FRAME ====================
+
+// =======PLACE ORDER FRAME========
 class PlaceOrderFrame extends JFrame {
     private JTextField nameField, qtyField;
-    private JLabel orderIdVal, customerIdVal, totalVal;
+    private JLabel orderIdVal, totalVal;
     private OrderManager manager;
 
     public PlaceOrderFrame() {
@@ -347,7 +361,7 @@ class PlaceOrderFrame extends JFrame {
     }
 }
 
-// ==================== 7. SEARCH SELECTION FRAME ====================
+// =====SEARCH SELECTION FRAME========
 class SearchSelectionFrame extends JFrame {
     public SearchSelectionFrame() {
         setTitle("Search Menu Options");
@@ -374,7 +388,7 @@ class SearchSelectionFrame extends JFrame {
     }
 }
 
-// ==================== 8. SEARCH BEST CUSTOMER ====================
+// =======SEARCH BEST CUSTOMER==========
 class SearchBestCustomerFrame extends JFrame {
     public SearchBestCustomerFrame() {
         setTitle("Search Best Customers");
@@ -405,7 +419,7 @@ class SearchBestCustomerFrame extends JFrame {
     }
 }
 
-// ==================== 9. SEARCH ORDER FRAME ====================
+// =========SEARCH ORDER FRAME============
 class SearchOrderFrame extends JFrame {
     public SearchOrderFrame() {
         setTitle("Search Order Details");
@@ -451,7 +465,7 @@ class SearchOrderFrame extends JFrame {
     }
 }
 
-// ==================== 10. SEARCH CUSTOMER FRAME ====================
+// ==========SEARCH CUSTOMER FRAME===============
 class SearchCustomerFrame extends JFrame {
     public SearchCustomerFrame() {
         setTitle("Search Customer Details");
@@ -498,7 +512,7 @@ class SearchCustomerFrame extends JFrame {
     }
 }
 
-// ==================== 11. VIEW ORDERS BY CATEGORY ====================
+// ===========VIEW ORDERS BY CATEGORY=============
 class ViewOrdersCategoryFrame extends JFrame {
     public ViewOrdersCategoryFrame() {
         setTitle("View Orders");
@@ -548,7 +562,7 @@ class TableDisplayFrame extends JFrame {
     }
 }
 
-// ==================== 12. UPDATE ORDER FRAME ====================
+// ==========UPDATE ORDER FRAME============
 class UpdateOrderFrame extends JFrame {
     private JTextField txtOrderId, txtNewQty;
     private JComboBox<String> cmbStatus;
@@ -653,7 +667,6 @@ class UpdateOrderFrame extends JFrame {
     }
 }
 
-// ==================== 13. MAIN BOOTSTRAPPER ====================
 public class BurgerShop {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new HomeFrame());
