@@ -6,9 +6,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
-
-
-
 // ======ORDER MODEL ========
 class Order {
     private String orderID;
@@ -150,7 +147,6 @@ class BurgerShopController {
 
     private BurgerShopController() {
         orderManager = new OrderManager();
-        // Initial test/preview data seeding has been removed from here.
     }
 
     public static BurgerShopController getInstance() {
@@ -169,7 +165,7 @@ class BurgerShopController {
 class UIComponents {
     public static JPanel createHeader(String title) {
         JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(new Color(217, 83, 79)); // Classic Red top bar
+        header.setBackground(new Color(217, 83, 79)); 
         header.setPreferredSize(new Dimension(800, 55));
         
         JLabel label = new JLabel(title, JLabel.CENTER);
@@ -179,8 +175,35 @@ class UIComponents {
         return header;
     }
 
+    // Custom Button Component for Capsule Shapes
+    private static class RoundedButton extends JButton {
+        public RoundedButton(String text) {
+            super(text);
+            setContentAreaFilled(false); // Keeps standard background painting off
+            setBorderPainted(false);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            
+            if (getModel().isArmed()) {
+                g2.setColor(getBackground().darker());
+            } else {
+                g2.setColor(getBackground());
+            }
+            
+            // Draw a capsule/pill shape matching button's height
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), getHeight(), getHeight());
+            g2.dispose();
+            
+            super.paintComponent(g);
+        }
+    }
+
     public static JButton createStyledButton(String text, Color bg) {
-        JButton btn = new JButton(text);
+        JButton btn = new RoundedButton(text); // Using custom rounded button
         btn.setFont(new Font("Arial", Font.BOLD, 14));
         btn.setBackground(bg);
         btn.setForeground(Color.WHITE);
@@ -195,7 +218,7 @@ class HomeFrame extends JFrame {
     public HomeFrame() {
         setTitle("iHungry Burger Shop Management System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(750, 520); // Slightly increased height to accommodate the image perfectly
+        setSize(750, 520); 
         setLocationRelativeTo(null);
         setResizable(false);
         setLayout(new GridLayout(1, 2));
@@ -212,16 +235,11 @@ class HomeFrame extends JFrame {
         titleLabel.setForeground(new Color(184, 134, 11));
         leftPanel.add(titleLabel, gbc);
 
-        
-
         // ======Add Image======
         gbc.gridy = 2;
         gbc.insets = new Insets(10, 0, 0, 0);
         try {
-            
             ImageIcon originalIcon = new ImageIcon("burger.jpg"); 
-            
-           
             Image scaledImage = originalIcon.getImage().getScaledInstance(220, 220, Image.SCALE_SMOOTH);
             ImageIcon scaledIcon = new ImageIcon(scaledImage);
             
@@ -250,11 +268,15 @@ class HomeFrame extends JFrame {
             rightPanel.add(Box.createVerticalStrut(15));
         }
 
-        JButton exitBtn = UIComponents.createStyledButton("Exit", new Color(100, 100, 100));
-        exitBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        exitBtn.setMaximumSize(new Dimension(240, 40));
+        // Lower right positioning for Exit button using layout logic matching the image reference
+        JPanel exitContainer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        exitContainer.setBackground(new Color(230, 230, 230));
+        JButton exitBtn = UIComponents.createStyledButton("Exit", new Color(217, 83, 79));
+        exitBtn.setPreferredSize(new Dimension(100, 40));
         exitBtn.addActionListener(e -> System.exit(0));
-        rightPanel.add(exitBtn);
+        exitContainer.add(exitBtn);
+
+        rightPanel.add(exitContainer);
         rightPanel.add(Box.createVerticalGlue());
 
         add(leftPanel);
@@ -271,7 +293,6 @@ class HomeFrame extends JFrame {
         }
     }
 }
-
 
 // =======PLACE ORDER FRAME========
 class PlaceOrderFrame extends JFrame {
